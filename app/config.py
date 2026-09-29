@@ -24,6 +24,29 @@ class Settings(BaseSettings):
         alias="CORS_ORIGINS",
     )
 
+    # Qdrant
+    qdrant_url: str = Field(default="http://localhost:6333", alias="QDRANT_URL")
+    qdrant_api_key: str | None = Field(default=None, alias="QDRANT_API_KEY")
+    qdrant_collection: str = Field(
+        default="portfolio_knowledge",
+        alias="QDRANT_COLLECTION",
+    )
+
+    # Model providers (LiteLLM). GEMINI_API_KEY is read by LiteLLM from the environment.
+    embedding_model: str = Field(
+        default="gemini/text-embedding-004",
+        alias="EMBEDDING_MODEL",
+    )
+    embedding_dimensions: int | None = Field(
+        default=768,
+        alias="EMBEDDING_DIMENSIONS",
+    )
+    llm_model: str = Field(
+        default="gemini/gemini-2.0-flash",
+        alias="LLM_MODEL",
+    )
+    gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
+
     @field_validator("data_dir", mode="before")
     @classmethod
     def resolve_data_dir(cls, value: object) -> Path:
@@ -45,6 +68,20 @@ class Settings(BaseSettings):
         if isinstance(value, list):
             return [str(item).strip() for item in value if str(item).strip()]
         raise TypeError("CORS_ORIGINS must be a comma-separated string or list")
+
+    @field_validator("qdrant_api_key", "gemini_api_key", mode="before")
+    @classmethod
+    def empty_str_to_none(cls, value: object) -> object:
+        if value == "":
+            return None
+        return value
+
+    @field_validator("embedding_dimensions", mode="before")
+    @classmethod
+    def empty_dimensions_to_none(cls, value: object) -> object:
+        if value == "" or value is None:
+            return None
+        return value
 
 
 @lru_cache
