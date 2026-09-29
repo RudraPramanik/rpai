@@ -1,0 +1,114 @@
+{
+  "canonicalSource": "rp-frontend home SectionMyLatestProject + portfolio-ai-blueprint Phase 1 inventory",
+  "excludesProjectPagePlaceholders": true,
+  "projects": [
+    {
+      "slug": "oms",
+      "title": "Office management system fullstack mobile app",
+      "repositoryUrl": "https://github.com/RudraPramanik/oms",
+      "demoUrl": "https://github.com/RudraPramanik/oms",
+      "imageKey": "oms",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Fullstack mobile office management system.",
+      "techStacks": []
+    },
+    {
+      "slug": "laddu",
+      "title": "Food delivery mobile app",
+      "repositoryUrl": "https://github.com/RudraPramanik/laddu",
+      "demoUrl": "https://github.com/RudraPramanik/laddu",
+      "imageKey": "laddu",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Mobile food delivery application.",
+      "techStacks": []
+    },
+    {
+      "slug": "admin-dashboard",
+      "title": "admin-dashboard",
+      "repositoryUrl": "https://github.com/RudraPramanik/admin",
+      "demoUrl": "https://admin-six-smoky.vercel.app/",
+      "imageKey": "admin",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Web admin dashboard deployed on Vercel.",
+      "techStacks": []
+    },
+    {
+      "slug": "bestenu",
+      "title": "bestenu",
+      "repositoryUrl": "https://github.com/deri-kurniawan/portfolio",
+      "demoUrl": "https://www.bestenu.nl",
+      "imageKey": "bestenu",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Live web project at bestenu.nl.",
+      "techStacks": []
+    },
+    {
+      "slug": "transform-portfolio-design-to-web-app-3",
+      "title": "Portfolio 3",
+      "repositoryUrl": "https://github.com/RudraPramanik/admin",
+      "demoUrl": "https://admin-six-smoky.vercel.app/",
+      "imageKey": "portfolioWebsite",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "case-study",
+      "summary": "Portfolio design transformed into a web app.",
+      "techStacks": []
+    },
+    {
+      "slug": "transform-portfolio-design-to-web-app-4",
+      "title": "Portfolio 4 (Lyte)",
+      "repositoryUrl": "",
+      "demoUrl": "https://www.lytespark.com/",
+      "imageKey": "lyte",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Lyte / Lytespark web presence.",
+      "techStacks": []
+    },
+    {
+      "slug": "nike",
+      "title": "nike",
+      "repositoryUrl": "https://github.com/RudraPramanik/nike",
+      "demoUrl": "https://nike-zeta-five.vercel.app/",
+      "imageKey": "nike",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "case-study",
+      "summary": "Nike-themed web UI demo on Vercel.",
+      "techStacks": []
+    },
+    {
+      "slug": "resort",
+      "title": "resort-booking",
+      "repositoryUrl": "https://github.com/RudraPramanik/hotelreservation/tree/main/hotel-reservation",
+      "demoUrl": "https://hotel-switzerland.netlify.app/",
+      "imageKey": "hotel",
+      "tabs": ["project"],
+      "category": "app",
+      "projectType": "real-project",
+      "summary": "Resort / hotel reservation web app.",
+      "techStacks": []
+    },
+    {
+      "slug": "portfolio-web-design",
+      "title": "Portfolio Web Design",
+      "repositoryUrl": "https://github.com/RudraPramanik/laddu",
+      "demoUrl": "https://www.figma.com/proto/TYBBBbA5cvBN4QU70hNxvr/DK-PORTFOLIO?page-id=0%3A1&type=design&node-id=49-26&viewport=-226%2C241%2C0.42&scaling=min-zoom",
+      "imageKey": "portfolioWebsite",
+      "tabs": ["ui"],
+      "category": "design",
+      "projectType": "case-study",
+      "summary": "Figma portfolio web design prototype.",
+      "techStacks": []
+    }
+  ]
+}

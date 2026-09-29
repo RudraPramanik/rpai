@@ -1,0 +1,27 @@
+{
+  "name": "Rudra Pramanik",
+  "headline": "Full Stack Web, Mobile, ML Developer",
+  "tagline": "Full Stack Software Developer & ML expert",
+  "location": "Dhaka, Bangladesh",
+  "email": "rudrahimangshoo2020@gmail.com",
+  "links": {
+    "github": "https://github.com/RudraPramanik",
+    "linkedin": "https://www.linkedin.com/in/rudra-pramanik99/",
+    "instagram": "https://www.instagram.com/rudra_himangshoo/"
+  },
+  "techStack": [
+    "Next JS",
+    "NestJS",
+    "Expo",
+    "Prisma",
+    "Express JS",
+    "Planet Scale",
+    "Javascript",
+    "React JS",
+    "Tailwind CSS",
+    "React Native",
+    "Typescript"
+  ],
+  "yearsOfExperience": null,
+  "resumeUrl": null
+}
