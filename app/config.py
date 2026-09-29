@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     )
     # Prefer GEMINI_LLM_API_MODEL; LLM_MODEL remains a supported alias.
     llm_model: str = Field(
-        default="gemini/gemini-2.0-flash",
+        default="gemini/gemini-3.1-flash-lite",
         validation_alias=AliasChoices("GEMINI_LLM_API_MODEL", "LLM_MODEL"),
     )
     # Prefer GEMINI_API_KEY; accept GEMINAI_API_KEY / GENAI_API_KEY aliases.

@@ -47,7 +47,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 | `GEMINI_API_KEY` | _(required for embed + chat)_ | Also accepts `GEMINAI_API_KEY` / `GENAI_API_KEY` |
 | `EMBEDDING_MODEL` | `gemini/gemini-embedding-001` | Any LiteLLM embedding model id |
 | `EMBEDDING_DIMENSIONS` | `768` | Passed to the provider when set; must match the collection |
-| `GEMINI_LLM_API_MODEL` | `gemini/gemini-2.0-flash` | Free-tier Gemini chat default; `LLM_MODEL` is an alias |
+| `GEMINI_LLM_API_MODEL` | `gemini/gemini-3.1-flash-lite` | Gemini chat default (`gemini-2.0-flash` is retired); `LLM_MODEL` is an alias |
 | `NVIDIA_NIM_API_KEY` | _(required for voice)_ | NVIDIA build.nvidia.com / NIM key (`nvapi-…`) |
 | `NVIDIA_NIM_API_BASE` | `https://integrate.api.nvidia.com/v1` | Chat/models catalog base (not used for Parakeet STT) |
 | `STT_MODEL` | `nvidia/parakeet-ctc-1.1b-asr` | Label for the configured STT model |

@@ -2,6 +2,7 @@ fastapi==0.115.12
 uvicorn[standard]==0.34.2
 pydantic-settings==2.8.1
 litellm==1.74.15
+langgraph==1.2.12
 qdrant-client==1.19.1
 httpx==0.28.1
 python-multipart==0.0.20

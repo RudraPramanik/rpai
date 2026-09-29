@@ -89,14 +89,28 @@ def test_system_prompt_grounding_rules() -> None:
     assert "invent" in SYSTEM_PROMPT.lower()
 
 
-def test_run_chat_short_circuits_without_llm(monkeypatch) -> None:
-    fake = _FakeLLM()
+def test_run_chat_profile_question_skips_knowledge_search(monkeypatch) -> None:
+    """Profile turns go through the agent and do not call retrieve."""
 
-    def _empty_retrieve(*_args, **_kwargs):
-        return []
+    class _Scripted(_FakeLLM):
+        def __init__(self) -> None:
+            super().__init__()
+            self.replies = [
+                '{"question_class": "profile", "slugs": [], "query": "favorite food"}',
+                INSUFFICIENT_EVIDENCE_ANSWER,
+            ]
 
-    monkeypatch.setattr("app.services.chat.retrieve", _empty_retrieve)
-    result = run_chat("What is Rudra's favorite food?", llm=fake)
+        def complete(self, prompt: str, *, system: str | None = None) -> str:
+            self.called = True
+            return self.replies.pop(0)
+
+    scripted = _Scripted()
+
+    def _boom(*_args, **_kwargs):
+        raise AssertionError("knowledge search should not run for a profile plan")
+
+    monkeypatch.setattr("app.agent.tools.retrieve", _boom)
+    result = run_chat("What is Rudra's favorite food?", llm=scripted)
     assert result.answer == INSUFFICIENT_EVIDENCE_ANSWER
     assert result.sources == []
-    assert fake.called is False
+    assert scripted.called is True

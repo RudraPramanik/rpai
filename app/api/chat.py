@@ -85,7 +85,7 @@ def chat(
     ),
     accept: str | None = Header(default=None, alias="Accept"),
 ):
-    """RAG chat: retrieve knowledge, then complete via the configured LLM provider."""
+    """Agent chat: route tools, then complete via the configured LLM provider."""
     if _wants_stream(stream, accept):
         return StreamingResponse(
             _sse_stream(body),

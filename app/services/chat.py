@@ -1,4 +1,4 @@
-"""RAG chat service: retrieve → prompt → complete/stream."""
+"""Chat service: portfolio agent graph, then complete/stream the synthesis."""
 
 from __future__ import annotations
 
@@ -6,12 +6,14 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
+from app.agent.graph import PortfolioAgent
 from app.config import Settings, get_settings
 from app.providers.base import LLMProvider
 from app.providers.factory import get_llm_provider
 from app.providers.litellm_provider import ProviderConfigError
-from app.rag.retrieve import RetrievalResult, retrieve
+from app.rag.retrieve import RetrievalResult
 from app.schemas.chat import ChatHistoryMessage, ChatSource
+from app.services.content import ContentStore
 
 INSUFFICIENT_EVIDENCE_ANSWER = (
     "I don't have enough documented information in the portfolio knowledge base "
@@ -103,6 +105,23 @@ def build_user_prompt(
     return "\n".join(parts)
 
 
+def _content_store(settings: Settings) -> ContentStore:
+    store = ContentStore(settings.data_dir)
+    store.load_all()
+    return store
+
+
+def _agent(
+    *,
+    settings: Settings | None,
+    llm: LLMProvider | None,
+    top_k: int,
+) -> PortfolioAgent:
+    cfg = settings or get_settings()
+    provider = llm or get_llm_provider(cfg)
+    return PortfolioAgent(provider, cfg, _content_store(cfg), top_k=top_k)
+
+
 def run_chat(
     query: str,
     *,
@@ -111,16 +130,11 @@ def run_chat(
     settings: Settings | None = None,
     llm: LLMProvider | None = None,
 ) -> ChatResult:
-    """Non-streaming chat: retrieve → complete (or short-circuit)."""
-    cfg = settings or get_settings()
-    results = retrieve(query, top_k=top_k, settings=cfg)
-    sources = dedupe_sources(results)
-    if not results:
-        return ChatResult(answer=INSUFFICIENT_EVIDENCE_ANSWER, sources=[])
-
-    provider = llm or get_llm_provider(cfg)
-    prompt = build_user_prompt(query, results, history)
-    answer = provider.complete(prompt, system=SYSTEM_PROMPT)
+    """Non-streaming chat: agent graph (route → tools → synthesize)."""
+    answer, sources = _agent(settings=settings, llm=llm, top_k=top_k).run(
+        query,
+        history,
+    )
     return ChatResult(answer=answer, sources=sources)
 
 
@@ -135,23 +149,10 @@ def stream_chat(
     """
     Streaming chat.
 
-    Returns (sources, token_iterator). When retrieve is empty, the iterator
-    yields the fixed insufficient-evidence answer and never calls the LLM.
+    Returns (sources, token_iterator). Routing and tools finish first; the
+    iterator yields synthesis tokens only.
     """
-    cfg = settings or get_settings()
-    results = retrieve(query, top_k=top_k, settings=cfg)
-    sources = dedupe_sources(results)
-
-    if not results:
-
-        def _empty() -> Iterator[str]:
-            yield INSUFFICIENT_EVIDENCE_ANSWER
-
-        return [], _empty()
-
-    provider = llm or get_llm_provider(cfg)
-    prompt = build_user_prompt(query, results, history)
-    return sources, provider.stream_complete(prompt, system=SYSTEM_PROMPT)
+    return _agent(settings=settings, llm=llm, top_k=top_k).stream(query, history)
 
 
 __all__ = [
