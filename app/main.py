@@ -1,4 +1,4 @@
-"""FastAPI entrypoint for the portfolio read API (Phase 2)."""
+"""FastAPI entrypoint for the portfolio API (Phases 2–7)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,9 @@ from typing import AsyncIterator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.chat import router as chat_router
 from app.api.portfolio import router as portfolio_router
+from app.api.voice import router as voice_router
 from app.config import get_settings
 from app.services.content import ContentLoadError, ContentStore
 
@@ -29,8 +31,12 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title="Portfolio API",
-        description="Read-only portfolio facts from Phase-1 JSON content.",
-        version="0.1.0",
+        description=(
+            "Portfolio facts (JSON), RAG chat (POST /api/chat), and voice "
+            "transcription (POST /api/voice/transcribe). Health and portfolio "
+            "reads do not require Qdrant, LLM, or STT."
+        ),
+        version="0.3.0",
         lifespan=lifespan,
     )
     app.add_middleware(
@@ -41,6 +47,8 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(portfolio_router)
+    app.include_router(chat_router)
+    app.include_router(voice_router)
     return app
 
 

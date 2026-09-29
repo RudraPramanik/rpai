@@ -59,7 +59,7 @@ def main() -> int:
         all_chunks.extend(chunk_markdown_file(path, knowledge_root))
 
     print(
-        f"Ingesting {len(files)} files → {len(all_chunks)} chunks "
+        f"Ingesting {len(files)} files -> {len(all_chunks)} chunks "
         f"into {settings.qdrant_collection!r} "
         f"(model={provider.model_id}, dim={vector_size})"
     )
