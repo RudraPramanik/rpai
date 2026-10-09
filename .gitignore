@@ -5,3 +5,5 @@ venv/
 .env
 *.egg-info/
 .pytest_cache/
+evals/_last_run.json
+evals/__pycache__/

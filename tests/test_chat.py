@@ -86,7 +86,10 @@ def test_build_user_prompt_includes_context_and_history() -> None:
 
 def test_system_prompt_grounding_rules() -> None:
     assert "ONLY" in SYSTEM_PROMPT.upper() or "only" in SYSTEM_PROMPT
-    assert "invent" in SYSTEM_PROMPT.lower()
+    text = SYSTEM_PROMPT.lower()
+    assert "invent" in text
+    assert "compensation" in text
+    assert "achievements" in text
 
 
 def test_run_chat_profile_question_skips_knowledge_search(monkeypatch) -> None:

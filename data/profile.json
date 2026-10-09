@@ -1,7 +1,7 @@
 {
   "name": "Rudra Pramanik",
-  "headline": "Full Stack Web, Mobile, ML Developer",
-  "tagline": "Full Stack Software Developer & ML expert",
+  "headline": "AI Engineer, Fullstack AI Product Engineer",
+  "tagline": "Fullstack AI Product Engineer ",
   "location": "Dhaka, Bangladesh",
   "email": "rudrahimangshoo2020@gmail.com",
   "links": {
@@ -10,18 +10,25 @@
     "instagram": "https://www.instagram.com/rudra_himangshoo/"
   },
   "techStack": [
-    "Next JS",
-    "NestJS",
-    "Expo",
-    "Prisma",
-    "Express JS",
-    "Planet Scale",
-    "Javascript",
-    "React JS",
-    "Tailwind CSS",
-    "React Native",
-    "Typescript"
+    "LangGraph",
+    "LangChain",
+    "FastAPI",
+    "AWS Bedrock, LITELLM",
+    "Anthropic",
+    "NEXTJS",
+    "Qdrant, Pgvector, Chroma",
+    "Redis, PostgreSQL, MongoDB, MySQL",
+    "Docker, Kubernetes, Terraform",
+    "Git, GitHub, GitLab",
+    "Linux, Bash, PowerShell",
+    "Python, JavaScript, TypeScript, SQL",
+    "React, Next.js, Tailwind CSS",
+    "Node.js, FastAPI",
+    "AWS, Azure, Google Cloud",
+    "Git, GitHub, GitLab",
+    "Linux, Bash, PowerShell",
+    "Python, JavaScript, TypeScript, SQL",
   ],
-  "yearsOfExperience": null,
+  "yearsOfExperience": 5 ,
   "resumeUrl": null
 }

@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "description": "Manual Phase-9 eval set for portfolio chat. See README.md and CHECKLIST.md.",
+  "questions": [
+    {
+      "id": "p01",
+      "category": "profile",
+      "question": "What is Rudra's full name?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "p02",
+      "category": "profile",
+      "question": "What is Rudra's headline?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "p03",
+      "category": "profile",
+      "question": "Where is Rudra based?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "p04",
+      "category": "profile",
+      "question": "What is Rudra's email address?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "p05",
+      "category": "profile",
+      "question": "How many years of experience does Rudra have?",
+      "expected_tool": "get_profile",
+      "expect_insufficient": true,
+      "notes": "yearsOfExperience is null in profile.json"
+    },
+    {
+      "id": "p06",
+      "category": "profile",
+      "question": "What is Rudra's GitHub profile URL?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "e01",
+      "category": "engineering",
+      "question": "What technologies are in Rudra's tech stack?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "e02",
+      "category": "engineering",
+      "question": "Does Rudra work with React Native and TypeScript?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "e03",
+      "category": "engineering",
+      "question": "What backend frameworks appear in the portfolio tech stack?",
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "j01",
+      "category": "project",
+      "question": "How does the OMS mobile app work?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms"]
+    },
+    {
+      "id": "j02",
+      "category": "project",
+      "question": "What problem does the OMS project solve?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms"]
+    },
+    {
+      "id": "j03",
+      "category": "project",
+      "question": "Describe the architecture of OMS.",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms"]
+    },
+    {
+      "id": "j04",
+      "category": "project",
+      "question": "What is the Laddu food delivery app about?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["laddu"]
+    },
+    {
+      "id": "j05",
+      "category": "project",
+      "question": "What engineering decisions were made for Laddu?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["laddu"]
+    },
+    {
+      "id": "j06",
+      "category": "project",
+      "question": "Tell me about the admin-dashboard project.",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["admin-dashboard"]
+    },
+    {
+      "id": "j07",
+      "category": "project",
+      "question": "What is the Nike project in this portfolio?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["nike"]
+    },
+    {
+      "id": "j08",
+      "category": "project",
+      "question": "Summarize the resort-booking project.",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["resort"]
+    },
+    {
+      "id": "c01",
+      "category": "comparative",
+      "question": "Compare OMS and Laddu.",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms", "laddu"]
+    },
+    {
+      "id": "c02",
+      "category": "comparative",
+      "question": "How do OMS and the admin-dashboard differ?",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms", "admin-dashboard"]
+    },
+    {
+      "id": "c03",
+      "category": "comparative",
+      "question": "Compare Laddu and Nike as portfolio projects.",
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["laddu", "nike"]
+    },
+    {
+      "id": "u01",
+      "category": "unanswerable",
+      "question": "What is Rudra's salary?",
+      "expect_insufficient": true,
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "u02",
+      "category": "unanswerable",
+      "question": "What is Rudra's favorite food?",
+      "expect_insufficient": true,
+      "expected_tool": "get_profile"
+    },
+    {
+      "id": "u03",
+      "category": "unanswerable",
+      "question": "Did Rudra win a Nobel Prize?",
+      "expect_insufficient": true
+    },
+    {
+      "id": "u04",
+      "category": "unanswerable",
+      "question": "What is Rudra's current employer compensation package?",
+      "expect_insufficient": true
+    },
+    {
+      "id": "u05",
+      "category": "unanswerable",
+      "question": "Does OMS use quantum computing?",
+      "expect_insufficient": true,
+      "expected_tools": ["get_project", "search_knowledge"],
+      "expected_sources": ["oms"],
+      "notes": "Answer must not invent quantum computing; insufficient or clearly not documented"
+    }
+  ]
+}

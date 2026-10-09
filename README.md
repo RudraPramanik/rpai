@@ -1,6 +1,8 @@
 # Portfolio API + RAG + Chat + Voice (Phases 2–7)
 
-FastAPI service that serves Phase-1 JSON facts under `data/`, a RAG ingestion/retrieve pipeline over Markdown knowledge (Qdrant + hosted embeddings via LiteLLM), `POST /api/chat` (JSON + SSE), and `POST /api/voice/transcribe` (speech-to-text only).
+FastAPI service that serves Phase-1 JSON facts under `data/`, a RAG ingestion/retrieve pipeline over Markdown knowledge (Qdrant + hosted embeddings via LiteLLM), `POST /api/chat` (JSON + SSE via a LangGraph portfolio agent), and `POST /api/voice/transcribe` (speech-to-text only).
+
+**See also:** [root README](../README.md) · [docs/](../docs/) (architecture, RAG/chat, voice/agent, API overview)
 
 ## Setup
 
@@ -109,7 +111,7 @@ curl -N "http://localhost:8000/api/chat?stream=true" \
   -d '{"query":"How does the OMS mobile app work?"}'
 ```
 
-Events: `token`, `sources`, `done`. Empty retrieval short-circuits without calling the LLM.
+Events: `token`, `sources`, `done`. Chat runs the portfolio agent (JSON tools + knowledge search). When tools yield no usable context, the API returns a fixed insufficient-evidence answer instead of inventing facts.
 
 ## Voice transcription (Phase 7)
 
@@ -133,4 +135,4 @@ docker run --rm -p 8000:8000 portfolio-api
 ## Notes
 
 - Nested `backend/.git` (if present) is left alone; the monorepo root is the source of truth.
-- LangGraph / agent routing is still a later blueprint phase.
+- LangGraph portfolio agent (route → tools → synthesize) is live for `POST /api/chat`. See [docs/voice-and-agent.md](../docs/voice-and-agent.md).

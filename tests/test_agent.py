@@ -358,3 +358,76 @@ def test_stream_chat_helper_yields_before_done() -> None:
 def test_parse_router_output_reads_fenced_json() -> None:
     data = parse_router_output('```json\n{"question_class": "profile", "slugs": []}\n```')
     assert data["question_class"] == "profile"
+
+
+def test_synthesis_system_never_invent_rules() -> None:
+    text = SYNTHESIS_SYSTEM.lower()
+    for phrase in (
+        "never invent",
+        "compensation",
+        "achievements",
+        "education",
+        "technologies",
+        "enough documented information",
+    ):
+        assert phrase in text
+
+
+def test_empty_knowledge_and_missing_project_skips_llm(monkeypatch, caplog) -> None:
+    from app.services.chat import INSUFFICIENT_EVIDENCE_ANSWER
+    from app.agent.graph import has_usable_tool_context
+
+    assert has_usable_tool_context([]) is False
+    assert (
+        has_usable_tool_context(
+            [{"tool": "search_knowledge", "result": {"chunks": []}}]
+        )
+        is False
+    )
+    assert (
+        has_usable_tool_context(
+            [{"tool": "get_project", "result": {"found": False, "slug": "x"}}]
+        )
+        is False
+    )
+
+    monkeypatch.setattr(
+        "app.agent.tools.retrieve",
+        lambda *args, **kwargs: [],
+    )
+    llm = ScriptedLLM(
+        [
+            '{"question_class": "project", "slugs": ["does-not-exist"], "query": "secret sauce"}',
+            "SHOULD_NOT_RUN",
+        ]
+    )
+    agent = PortfolioAgent(llm, get_settings(), _store())
+    caplog.set_level(logging.INFO)
+    answer, sources = agent.run("What is the secret sauce of does-not-exist?")
+    assert answer == INSUFFICIENT_EVIDENCE_ANSWER
+    assert sources == []
+    assert len(llm.prompts) == 1  # router only; synthesis skipped
+    assert "no_usable_tool_context" in caplog.text
+    assert "knowledge_chunks=0" in caplog.text or "knowledge_hits=0" in caplog.text
+
+
+def test_null_profile_years_empty_sources_no_knowledge(monkeypatch, caplog) -> None:
+    def _boom(*_args, **_kwargs):
+        raise AssertionError("knowledge search must not run for profile")
+
+    monkeypatch.setattr("app.agent.tools.retrieve", _boom)
+    llm = ScriptedLLM(
+        [
+            '{"question_class": "profile", "slugs": [], "query": "years of experience"}',
+            "Years of experience are not documented in the portfolio.",
+        ]
+    )
+    agent = PortfolioAgent(llm, get_settings(), _store())
+    caplog.set_level(logging.INFO)
+    answer, sources = agent.run("How many years of experience does Rudra have?")
+    assert sources == []
+    assert "not documented" in answer.lower()
+    assert "yearsOfExperience" in llm.prompts[-1]
+    assert "null" in llm.prompts[-1]
+    assert "agent synthesize complete" in caplog.text
+    assert "search_knowledge" not in caplog.text

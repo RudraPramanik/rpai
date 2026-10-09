@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 
 SYNTHESIS_SYSTEM = """You are the portfolio assistant for this site.
 Answer ONLY using the TOOL RESULTS in the user message.
-If a field is null, missing, or a tool result says found=false, say that information is not documented.
-Do not invent projects, employers, technologies, education, clients, years of experience, or personal facts.
+If a field is null, missing, empty, or a tool result says found=false, say that information is not documented.
+Never invent projects, technologies, experience figures, clients, education, employers, achievements, compensation, or personal facts that are not present in the tool results.
 When knowledge-search chunks are present, cite their labels (for example [1]) when helpful.
-If no tool result supports the question, say you do not have enough documented information.
+If tool results are empty, have no usable chunks, or do not support the question, say you do not have enough documented information — do not guess.
 Keep answers concise and professional."""
 
 
@@ -73,6 +73,24 @@ def build_synthesis_prompt(
     )
     parts.append(json.dumps(tool_results, ensure_ascii=False, indent=2))
     return "\n".join(parts)
+
+
+def has_usable_tool_context(tool_results: list[dict[str, Any]] | None) -> bool:
+    """True when at least one tool result can ground an answer."""
+    for entry in tool_results or []:
+        name = entry.get("tool")
+        result = entry.get("result")
+        if name == "get_profile" and isinstance(result, dict) and result:
+            return True
+        if name == "get_projects" and isinstance(result, list) and result:
+            return True
+        if name == "get_project" and isinstance(result, dict) and result.get("found") is True:
+            return True
+        if name == "search_knowledge" and isinstance(result, dict):
+            chunks = result.get("chunks") or []
+            if chunks:
+                return True
+    return False
 
 
 class PortfolioAgent:
@@ -177,25 +195,50 @@ class PortfolioAgent:
                 payload = {"chunks": chunks}
             else:
                 continue
-            logger.info("agent tool name=%s args=%s", name, args)
+            if name == "search_knowledge":
+                chunk_count = len(payload.get("chunks") or [])
+                logger.info(
+                    "agent tool name=%s args=%s knowledge_chunks=%s",
+                    name,
+                    args,
+                    chunk_count,
+                )
+            else:
+                logger.info("agent tool name=%s args=%s", name, args)
             tool_results.append({"tool": name, "arguments": args, "result": payload})
 
+        sources = dedupe_sources(hits)
+        logger.info(
+            "agent tools done knowledge_hits=%s sources=%s",
+            len(hits),
+            len(sources),
+        )
         return {
             "tool_results": tool_results,
-            "sources": dedupe_sources(hits),
+            "sources": sources,
         }
 
     def synthesize(self, state: AgentState) -> dict[str, str]:
+        from app.services.chat import INSUFFICIENT_EVIDENCE_ANSWER
+
+        tool_results = state.get("tool_results") or []
+        if not has_usable_tool_context(tool_results):
+            logger.info("agent synthesize skipped_llm reason=no_usable_tool_context")
+            return {"answer": INSUFFICIENT_EVIDENCE_ANSWER}
+
         prompt = build_synthesis_prompt(
             state.get("query") or "",
             state.get("history") or [],
-            state.get("tool_results") or [],
+            tool_results,
         )
         answer = self.llm.complete(prompt, system=SYNTHESIS_SYSTEM).strip()
         if not answer:
-            from app.services.chat import INSUFFICIENT_EVIDENCE_ANSWER
-
             answer = INSUFFICIENT_EVIDENCE_ANSWER
+        logger.info(
+            "agent synthesize complete answer_chars=%s sources=%s",
+            len(answer),
+            len(state.get("sources") or []),
+        )
         return {"answer": answer}
 
     def _initial(self, query: str, history: list[ChatHistoryMessage] | None) -> AgentState:
@@ -228,21 +271,32 @@ class PortfolioAgent:
         state.update(self.route(state))
         state.update(self.execute_tools(state))
         sources = list(state.get("sources") or [])
-        prompt = build_synthesis_prompt(
-            state.get("query") or "",
-            state.get("history") or [],
-            state.get("tool_results") or [],
-        )
+        tool_results = state.get("tool_results") or []
 
         def tokens() -> Iterator[str]:
+            from app.services.chat import INSUFFICIENT_EVIDENCE_ANSWER
+
+            if not has_usable_tool_context(tool_results):
+                logger.info("agent synthesize stream skipped_llm reason=no_usable_tool_context")
+                yield INSUFFICIENT_EVIDENCE_ANSWER
+                return
+
+            prompt = build_synthesis_prompt(
+                state.get("query") or "",
+                state.get("history") or [],
+                tool_results,
+            )
             yielded = False
             for delta in self.llm.stream_complete(prompt, system=SYNTHESIS_SYSTEM):
                 if delta:
                     yielded = True
                     yield delta
             if not yielded:
-                from app.services.chat import INSUFFICIENT_EVIDENCE_ANSWER
-
                 yield INSUFFICIENT_EVIDENCE_ANSWER
+            else:
+                logger.info(
+                    "agent synthesize stream complete sources=%s",
+                    len(sources),
+                )
 
         return sources, tokens()
